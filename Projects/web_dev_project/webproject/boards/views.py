@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from .models import Board, Topic, Post
+from .forms import NewTopicForm
 from datetime import datetime
 
 # Create your views here.
@@ -15,15 +16,19 @@ def board_topics(request, pk):
 
 def new_topic(request, pk):
     board = get_object_or_404(Board, pk=pk)
+    user = User.objects.first()
 
     if request.method == 'POST':
-        subject = request.POST['subject']
-        message = request.POST['message']
-        time = datetime.now()
-        user = User.objects.first() # to do : get the logged in user
-        user_topic = Topic.objects.create(subject=subject,last_update=time,board=board,starter=user)
-        post = Post.objects.create(message=message,topics=user_topic,created_by=user)
+        form = NewTopicForm(request.POST)
+        if form.is_valid():
+            topic = form.save(commit=False)
+            topic.board = board
+            topic.starter = user
+            topic.save()
+            post = Post.objects.create(message = form.cleaned_data.get('message'), topics = topic, created_by = user)
+            return redirect('board_topics', pk=board.pk)
 
-        return redirect('board_topics', pk=board.pk) # to do: redirect to the created topic page
+    else:
+        form = NewTopicForm()
 
-    return render(request, 'new_topic.html', {'board': board})
+    return render(request, 'new_topic.html', {'board': board, 'form': form})
