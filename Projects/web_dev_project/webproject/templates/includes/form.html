@@ -12,14 +12,14 @@
   <div class="form-group">
     {{ field.label_tag }}
     {% if form.is_bound %}
-    {% render_field field class=field|input_class %}
-    {% for error in field.errors %}
-      <div class="invalid-feedback">
-        {{ error }}
-      </div>
-    {% endfor %}
-    {% else %}
-    {% render_field field class=field|input_class %}
-    {% endif %}
+{% render_field field class=field|input_class %}
+{% for error in field.errors %}
+<div class="invalid-feedback">
+{{ error }}
+</div>
+{% endfor %}
+{% else %}
+{% render_field field class=field|input_class %}
+{% endif %}
   </div>
 {% endfor %}

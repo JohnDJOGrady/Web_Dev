@@ -49,7 +49,9 @@ class ReplyTopicTests(ReplyTopicTestCase):
         self.assertIsInstance(form, PostForm)
 
     def test_form_inputs(self):
-        ''' two inputs csrf and text area'''
+        '''
+        The view must contain two inputs: csrf, message textarea
+        '''
         self.assertContains(self.response, '<input', 1)
         self.assertContains(self.response, '<textarea', 1)
 
@@ -61,23 +63,33 @@ class SuccessfulReplyTopicTests(ReplyTopicTestCase):
         self.response = self.client.post(self.url, {'message': 'hello, world!'})
 
     def test_redirection(self):
-        ''' valid submission redirects user '''
+        '''
+        A valid form submission should redirect the user
+        '''
         topic_posts_url = reverse('topic_posts', kwargs={'pk': self.board.pk, 'topic_pk': self.topic.pk})
         self.assertRedirects(self.response, topic_posts_url)
 
     def test_reply_created(self):
+        '''
+        The total post count should be 2
+        The one created in the `ReplyTopicTestCase` setUp
+        and another created by the post data in this class
+        '''
         self.assertEquals(Post.objects.count(), 2)
 
 
 class InvalidReplyTopicTests(ReplyTopicTestCase):
     def setUp(self):
+        '''
+        Submit an empty dictionary to the `reply_topic` view
+        '''
         super().setUp()
         self.client.login(username=self.username, password=self.password)
         self.response = self.client.post(self.url, {})
 
     def test_status_code(self):
         '''
-        Invalid sumission returns to same page
+        An invalid form submission should return to the same page
         '''
         self.assertEquals(self.response.status_code, 200)
 

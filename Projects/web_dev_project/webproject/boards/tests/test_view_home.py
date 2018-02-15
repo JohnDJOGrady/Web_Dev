@@ -1,11 +1,10 @@
-from django.urls import reverse
-from django.urls import resolve
-from django.test import TestCase
 
-from django.contrib.auth.models import User
-from ..views import home, board_topics, new_topic
-from ..models import Board, Topic, Post
-from ..forms import NewTopicForm
+from django.test import TestCase
+from django.urls import resolve, reverse
+
+from ..models import Board
+from ..views import home
+
 
 class HomeTests(TestCase):
     def setUp(self):
@@ -14,9 +13,7 @@ class HomeTests(TestCase):
         self.response = self.client.get(url)
 
     def test_home_view_status_code(self):
-        url = reverse('home')
-        response = self.client.get(url)
-        self.assertEquals(response.status_code, 200)
+        self.assertEquals(self.response.status_code, 200)
 
     def test_home_url_resolves_home_view(self):
         view = resolve('/')
