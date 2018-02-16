@@ -16,7 +16,7 @@ class Board(models.Model):
         return Post.objects.filter(topic__board=self).count()
 
     def get_last_post(self):
-        return Post.objects.filter(topic__board=self).order_by('-created_at').first()
+        return Post.objects.filter(topic__board=self).order_by('created_at').first()
 
 
 class Topic(models.Model):
@@ -46,7 +46,7 @@ class Topic(models.Model):
         return range(1, count + 1)
 
     def get_last_ten_posts(self):
-        return self.posts.order_by('-created_at')[:10]
+        return self.posts.order_by('created_at')[:10]
 
 class Post(models.Model):
     message = models.TextField(max_length=4000)
